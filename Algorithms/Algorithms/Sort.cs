@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Concurrent;
+using System.Numerics;
 
-namespace Algorithms {
+namespace Algorithms.Algorithms {
     internal class Sort {
         //Insertion sorting is an algorithm that is efficient
         //for a small number of items. Worst case scenario,
@@ -29,7 +30,7 @@ namespace Algorithms {
         //would need to be greater than 1 to be split). Then it
         //sorts and merges the arrays. This has a time complexity
         //of O(n log n) or very close to linear.
-        public void Merge(int[] a, int l, int r) {
+        public int[] Merge(int[] a, int l, int r) {
             if (l < r) {
                 int m = l + (r - l) / 2;
 
@@ -38,6 +39,8 @@ namespace Algorithms {
 
                 MergeSort(a, l, m, r);
             }
+
+            return a;
         }
 
         private static void MergeSort(int[] a, int l, int m, int r) {
@@ -48,11 +51,11 @@ namespace Algorithms {
             int[] R = new int[n2];
             int i, j;
 
-            for (i = 0; i < n1; i++) {
+            for (i = 0; i < n1; ++i) {
                 L[i] = a[l + i];
             }
 
-            for (j = 0; j < n2; j++) {
+            for (j = 0; j < n2; ++j) {
                 R[j] = a[m + 1 + j];
             }
 
@@ -63,7 +66,7 @@ namespace Algorithms {
 
             while (i < n1 && j < n2) {
                 if (L[i] <= R[j]) {
-                    a[k] = L[j];
+                    a[k] = L[i];
                     i++;
                 } else {
                     a[k] = R[j];
@@ -89,7 +92,7 @@ namespace Algorithms {
         //sorting algorithm. It's worst case scenario is
         //also O(n^2).
         public int[] Bubble(int[] a) {
-            for (int i = 1; i < a.Length - 1; i++) {
+            for (int i = 1; i < a.Length; i++) {
                 for (int j = a.Length - 1; j > 0;  j--) {
                     if (a[j] < a[j-1]) {
                         int temp = a[j];
@@ -105,43 +108,34 @@ namespace Algorithms {
         //Quicksort is another sorting algorithm that,
         //in the worst case is O(n^2) but it averages
         //a running time of O(n log n).
-        public int[] Quick(int[] a) {
-            if (a.Length < 2) {
-                return a;
-            }
+        public void Quick(int[] a, int low, int high) {
+            if (low < high) {
+                int pi = Partition(a, low, high);
 
-            return QuickSort(a, 0, a.Length - 1);
+                Quick(a, low, pi - 1);
+                Quick(a, pi + 1, high);
+            }
         }
 
-        private static int[] QuickSort(int[] a, int l, int r) {
-            int pivot = a[l];
-            int currentL = l;
-            int currentR = r;
+        private static int Partition(int[] a, int low, int high) {
+            int pivot = a[high];
+            int i = low - 1;
 
-            while (currentL < currentR) {
-                while (a[currentL] < pivot) {
-                    currentL++;
-                }
-
-                while (a[currentR] > pivot) {
-                    currentR--;
-                }
-
-                if (currentL <= currentR) {
-                    (a[currentR], a[currentL]) = (a[currentL], a[currentR]);
-                    currentL++;
-                    currentR--;
+            for (int j = low; j <= high - 1; j++) {
+                if (a[j] < pivot) {
+                    i++;
+                    Swap(a, i, j);
                 }
             }
 
-            if (l < currentR) {
-                QuickSort(a, l, currentR);
-            }
-            if (r< currentL) {
-                QuickSort(a, currentL, r);
-            }
+            Swap(a, i + 1, high);
+            return i + 1;
+        }
 
-            return a;
+        private static void Swap(int[] a, int i, int j) {
+            int temp = a[i];
+            a[i] = a[j];
+            a[j] = temp;
         }
 
         //Shell Sorting is a form/modification of insertion sorting.
@@ -150,23 +144,31 @@ namespace Algorithms {
         //The worst case time complexity for this is O(n^2).
         //The average time complexity, however, is O(n log n).
         public int[] Shell(int[] a, int size) {
-            for (int interval = size / 2; interval > 0; interval /= 2) {
-                for (int i = interval; i < size; i++) {
-                    int current = a[i];
-                    int k = i;
+            int i, j, inc = 3, temp;
 
-                    while (k > interval && a[k - interval] > current) {
-                        a[k] = a[k - interval];
-                        k -= interval;
+            while (inc > 0) {
+                for (i = 0; i < size; i++) {
+                    j = i;
+                    temp = a[i];
+
+                    while ((j >= inc) && (a[j - inc] > temp)) {
+                        a[j] = a[j - inc];
+                        j = j - inc;
                     }
 
-                    a[k] = current;
+                    a[j] = temp;
                 }
+
+                if (inc / 2 != 0)
+                    inc = inc / 2;
+                else if (inc == 1)
+                    inc = 0;
+                else
+                    inc = 1;
             }
 
             return a;
         }
-
 
         //Selection sort is similar to bubble sort and 
         //has a time complexity of O(n^2).
@@ -195,7 +197,7 @@ namespace Algorithms {
         //The time complexity of this sorting algorithm is
         //O(n log n).
         public int[] Heap(int[] a) {
-            for (int i = (a.Length / 2) - 1; i >= 0; i--) {
+            for (int i = a.Length / 2 - 1; i >= 0; i--) {
                 Heapify(a, a.Length, i);
             }
 
@@ -237,13 +239,13 @@ namespace Algorithms {
             const int RUN = 32;
 
             for (int i = 0; i < n; i += RUN) {
-                TimInsertion(a, i, Math.Min((i + RUN - 1), (n - 1)));
+                TimInsertion(a, i, Math.Min(i + RUN - 1, n - 1));
             }
 
             for (int size = RUN; size < n; size = 2 * size) { 
                 for (int left = 0; left < n; left += 2 * size) {
                     int mid = left + size - 1;
-                    int right = Math.Min((left + 2 * size - 1), (n - 1));
+                    int right = Math.Min(left + 2 * size - 1, n - 1);
 
                     if (mid < right) {
                         MergeSort(a, left, mid, right);
@@ -267,6 +269,5 @@ namespace Algorithms {
                 a[j + 1] = temp;
             }
         }
-
     }
 }

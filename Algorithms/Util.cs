@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Algorithms {
+﻿namespace Algorithms {
     internal class Util {
         private const int MIN = 1;
         private const int MAX = 100;
@@ -30,9 +23,42 @@ namespace Algorithms {
             return testData;
         }
 
-        public string FormatStatistics(string algorithm, int sets, int count, double totalTime) {
-            return $"\tCompleted {algorithm} Sort of {sets} array of {count} items in {totalTime}ms."
-                + $"\n\tMean:\t{(totalTime / count)}ms\n";
+
+        public List<int[]> CloneData(List<int[]> data) {
+            List<int[]> clone = new List<int[]>();
+
+            foreach (int[] d in data) {
+                int[] c = new int[d.Length];
+                for (int i = 0; i < d.Length; i++) {
+                    int n = d[i];
+                    c[i] = n;
+                }
+                clone.Add(c);
+            }
+
+            return clone;
+        }
+
+        public string FormatTestStatistics(string algorithm, List<double> elapsed, double itemsFound = 0.0) {
+            int count = elapsed.Count();
+            double total = elapsed.Sum();
+            double mean = elapsed.Average();
+            double median = elapsed.ElementAt(count / 2);
+            double mode = elapsed.GroupBy(x => x)
+                .OrderByDescending(x => x.Count())
+                .ThenBy(x => x.Key)
+                .Select(x => (double)x.Key)
+                .FirstOrDefault();
+
+            string successRate = itemsFound == 0.0 ? "" : 
+                $"\n\tFound:\t{(itemsFound / count).ToString("P2")}";
+
+            return $"\tCompleted {algorithm}"
+                + $"\n\tTotal\t{total.ToString("0.00")}ms"
+                + $"\n\tMean:\t{mean.ToString("0.00")}ms"
+                + $"\n\tMedian:\t{median.ToString("0.00")}ms"
+                + $"\n\tMode:\t{mode.ToString("0.00")}ms"
+                + $"{successRate}\n";
         }
     }
 }

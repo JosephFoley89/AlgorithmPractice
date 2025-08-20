@@ -1,12 +1,12 @@
-﻿using System.Diagnostics;
-using System.Timers;
+﻿using Algorithms.Algorithms;
+using System.Diagnostics;
 
 namespace Algorithms.Tests {
     internal class SortingTest {
         private static Sort sort;
         private static Util util;
         private static Stopwatch stopwatch;
-        private static List<int[]> Data;
+        private List<int[]> Data;
         private static int Sets;
         private static int Count;
 
@@ -19,174 +19,224 @@ namespace Algorithms.Tests {
             Data = util.GenerateTestDataArray(sets, count);
         }
 
-        public void Execute(bool display = false) {
-            Console.WriteLine("Executing Sorting Tests");
-            if (Count < 1001) {
-                ExecuteInsertionSortTest(display);
-                ExecuteBubbleTest(display);
-                ExecuteSelectionTest(display);
-            }
-
-            ExecuteMergeTest(display);
-            ExecuteQuickTest(display);
-            ExecuteShellTest(display);
-            ExecuteHeapTest(display);
-            ExecuteTimTest(display);
+        public void Execute(bool debug = false) {
+            Console.WriteLine($"Executing Sorting Tests [{Sets} arrays with {Count} items]");
+            ExecuteBubbleTest(debug);
+            ExecuteSelectionTest(debug);
+            ExecuteInsertionSortTest(debug);
+            ExecuteShellTest(debug);
+            ExecuteMergeTest(debug);
+            ExecuteQuickTest(debug);
+            ExecuteHeapTest(debug);
+            ExecuteTimTest(debug);
         }
 
-        public void ExecuteInsertionSortTest(bool display = false) {
-            stopwatch.Start();
+        public void ExecuteInsertionSortTest(bool debug = false) {
+            List<int[]> data = util.CloneData(Data);
+            List<double> elapsed = new List<double>();
 
-            foreach (int[] d in Data) {
+            foreach (int[] d in data) {
+                int length = d.Length - 1;
                 int[] clone = (int[])d.Clone();
-                int[] sortedClone = sort.Insertion((int[])clone.Clone());
+                int[] unsorted = (int[])clone.Clone();
 
-                if (display) Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", clone)}\nSorted Array:\t{string.Join(",", sort.Insertion(d))}");
-                Debug.Assert(sort.Insertion(clone).SequenceEqual(sortedClone), "The sorted arrays do not match.");
+                sort.Insertion(clone);
+                stopwatch.Start();
+                sort.Insertion(d);
+                stopwatch.Stop();
+                elapsed.Add(stopwatch.Elapsed.TotalMilliseconds);
+                stopwatch.Reset();
+
+                if (debug) {
+                    Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
+                    sort.Quick(unsorted, 0, length);
+                    Debug.Assert(unsorted.SequenceEqual(clone), "The sorted arrays do not match.");
+                }
             }
 
-            stopwatch.Stop();
-            double elapsed = stopwatch.Elapsed.TotalMilliseconds;
-            Console.WriteLine(util.FormatStatistics("Insertion", Sets, Count, elapsed));
-            stopwatch.Reset();
+            Console.WriteLine(util.FormatTestStatistics("Insertion Sort", elapsed));
+
         }
 
-        public void ExecuteMergeTest(bool display = false) {
-            stopwatch.Start();
+        public void ExecuteMergeTest(bool debug = false) {
+            List<int[]> data = util.CloneData(Data);
+            List<double> elapsed = new List<double>();
 
-            foreach (int[] d in Data) {
+            foreach (int[] d in data) {
+                int length = d.Length - 1;
                 int[] clone = (int[])d.Clone();
                 int[] unsorted = (int[])clone.Clone();
                 
                 sort.Merge(clone, 0, clone.Length - 1);
+                stopwatch.Start();
                 sort.Merge(d, 0, d.Length - 1);
+                stopwatch.Stop();
+                elapsed.Add(stopwatch.Elapsed.TotalMilliseconds);
+                stopwatch.Reset();
 
-                if (display) Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
-                Debug.Assert(clone.SequenceEqual(d), "The sorted arrays do not match.");
+                if (debug) {
+                    Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
+                    sort.Quick(unsorted, 0, length);
+                    Debug.Assert(unsorted.SequenceEqual(clone), "The sorted arrays do not match.");
+                }
             }
 
-            stopwatch.Stop();
-            double elapsed = stopwatch.Elapsed.TotalMilliseconds;
-            Console.WriteLine(util.FormatStatistics("Merge", Sets, Count, elapsed));
-            stopwatch.Reset();
+            Console.WriteLine(util.FormatTestStatistics("Merge Sort", elapsed));
         }
 
-        public void ExecuteBubbleTest(bool display = false) {
-            stopwatch.Start();
+        public void ExecuteBubbleTest(bool debug = false) {
+            List<int[]> data = util.CloneData(Data);
+            List<double> elapsed = new List<double>();
 
-            foreach (int[] d in Data) {
+            foreach (int[] d in data) {
+                int length = d.Length - 1;
                 int[] clone = (int[])d.Clone();
                 int[] unsorted = (int[])clone.Clone();
 
                 sort.Bubble(clone);
+                stopwatch.Start();
                 sort.Bubble(d);
+                stopwatch.Stop();
+                elapsed.Add(stopwatch.Elapsed.TotalMilliseconds);
+                stopwatch.Reset();
 
-                if (display) Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
-                Debug.Assert(clone.SequenceEqual(d), "The sorted arrays do not match.");
+                if (debug) {
+                    Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
+                    sort.Quick(unsorted, 0, length);
+                    Debug.Assert(unsorted.SequenceEqual(clone), "The sorted arrays do not match.");
+                }
             }
 
-            stopwatch.Stop();
-            double elapsed = stopwatch.Elapsed.TotalMilliseconds;
-            Console.WriteLine(util.FormatStatistics("Bubble", Sets, Count, elapsed));
-            stopwatch.Reset();
+            Console.WriteLine(util.FormatTestStatistics("Bubble Sort", elapsed));
         }
 
-        public void ExecuteQuickTest(bool display = false) {
-            stopwatch.Start();
+        public void ExecuteQuickTest(bool debug = false) {
+            List<int[]> data = util.CloneData(Data);
+            List<double> elapsed = new List<double>();
 
-            foreach (int[] d in Data) {
-                int[] clone = sort.Quick((int[])d.Clone());
+            foreach (int[] d in data) {
+                int length = d.Length - 1;
+                int[] clone = (int[])d.Clone();
                 int[] unsorted = (int[])clone.Clone();
 
-                sort.Quick(d);
+                sort.Quick(clone, 0, length);
+                stopwatch.Start();
+                sort.Quick(d, 0, length);
+                stopwatch.Stop();
+                elapsed.Add(stopwatch.Elapsed.TotalMilliseconds);
+                stopwatch.Reset();
 
-                if (display) Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
-                Debug.Assert(clone.SequenceEqual(d), "The sorted arrays do not match.");
+                if (debug) {
+                    Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
+                    Debug.Assert(sort.Merge(unsorted, 0, length).SequenceEqual(clone), "The sorted arrays do not match.");
+                }
             }
 
-            stopwatch.Stop();
-            double elapsed = stopwatch.Elapsed.TotalMilliseconds;
-            Console.WriteLine(util.FormatStatistics("Quick", Sets, Count, elapsed));
-            stopwatch.Reset();
+            Console.WriteLine(util.FormatTestStatistics("Quick Sort", elapsed));
         }
 
         public void ExecuteShellTest(bool display = false) {
-            stopwatch.Start();
+            List<int[]> data = util.CloneData(Data);
+            List<double> elapsed = new List<double>();
 
-            foreach (int[] d in Data) {
-                int length = d.Length - 1;
-                int[] clone = sort.Shell((int[])d.Clone(), length);
+            foreach (int[] d in data) {
+                int length = d.Length;
+                int[] clone = (int[])d.Clone();
                 int[] unsorted = (int[])clone.Clone();
 
+                sort.Shell(clone, length);
+                stopwatch.Start();
                 sort.Shell(d, length);
+                stopwatch.Stop();
+                elapsed.Add(stopwatch.Elapsed.TotalMilliseconds);
+                stopwatch.Reset();
 
-                if (display) Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
-                Debug.Assert(clone.SequenceEqual(d), "The sorted arrays do not match.");
+                if (display) {
+                    Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
+                    sort.Quick(unsorted, 0, length - 1);
+                    Debug.Assert(unsorted.SequenceEqual(clone), "The sorted arrays do not match.");
+                }
             }
 
-            stopwatch.Stop();
-            double elapsed = stopwatch.Elapsed.TotalMilliseconds;
-            Console.WriteLine(util.FormatStatistics("Shell", Sets, Count, elapsed));
-            stopwatch.Reset();
+            Console.WriteLine(util.FormatTestStatistics("Shell Sort", elapsed));
         }
 
-        public void ExecuteSelectionTest(bool display = false) {
-            stopwatch.Start();
+        public void ExecuteSelectionTest(bool debug = false) {
+            List<int[]> data = util.CloneData(Data);
+            List<double> elapsed = new List<double>();
 
-            foreach (int[] d in Data) {
-                int[] clone = sort.Selection((int[])d.Clone());
+            foreach (int[] d in data) {
+                int length = d.Length - 1;
+                int[] clone = (int[])d.Clone();
                 int[] unsorted = (int[])clone.Clone();
 
+                sort.Selection(clone);
+                stopwatch.Start();
                 sort.Selection(d);
+                stopwatch.Stop();
+                elapsed.Add(stopwatch.Elapsed.TotalMilliseconds);
+                stopwatch.Reset();
 
-                if (display) Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
-                Debug.Assert(clone.SequenceEqual(d), "The sorted arrays do not match.");
+                if (debug) {
+                    Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
+                    sort.Quick(unsorted, 0, length);
+                    Debug.Assert(clone.SequenceEqual(d), "The sorted arrays do not match.");
+                }
             }
 
-            stopwatch.Stop();
-            double elapsed = stopwatch.Elapsed.TotalMilliseconds;
-            Console.WriteLine(util.FormatStatistics("Selection", Sets, Count, elapsed));
-            stopwatch.Reset();
+            Console.WriteLine(util.FormatTestStatistics("Selection Sort", elapsed));
         }
 
         public void ExecuteHeapTest(bool display = false) {
-            stopwatch.Start();
+            List<int[]> data = util.CloneData(Data);
+            List<double> elapsed = new List<double>();
 
-            foreach (int[] d in Data) {
-                int[] clone = sort.Heap((int[])d.Clone());
+            foreach (int[] d in data) {
+                int length = d.Length - 1;
+                int[] clone = (int[])d.Clone();
                 int[] unsorted = (int[])clone.Clone();
 
+                sort.Heap(clone);
+                stopwatch.Start();
                 sort.Heap(d);
+                stopwatch.Stop();
+                elapsed.Add(stopwatch.Elapsed.TotalMilliseconds);
+                stopwatch.Reset();
 
-                if (display) Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
-                Debug.Assert(clone.SequenceEqual(d), "The sorted arrays do not match.");
+                if (display) {
+                    Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
+                    sort.Quick(unsorted, 0, length);
+                    Debug.Assert(unsorted.SequenceEqual(clone), "The sorted arrays do not match.");
+                }
             }
 
-            stopwatch.Stop();
-            double elapsed = stopwatch.Elapsed.TotalMilliseconds;
-            Console.WriteLine(util.FormatStatistics("Heap", Sets, Count, elapsed));
-            stopwatch.Reset();
+            Console.WriteLine(util.FormatTestStatistics("Heap Sort", elapsed));
         }
 
         public void ExecuteTimTest(bool display = false) {
-            stopwatch.Start();
+            List<int[]> data = util.CloneData(Data);
+            List<double> elapsed = new List<double>();
 
-            foreach (int[] d in Data) {
-                int length = d.Length - 1;
-                int[] clone = sort.Tim((int[])d.Clone(), length);
+            foreach (int[] d in data) {
+                int length = d.Length;
+                int[] clone = (int[])d.Clone();
                 int[] unsorted = (int[])clone.Clone();
 
+                sort.Tim(clone, length);
+                stopwatch.Start();
                 sort.Tim(d, length);
+                stopwatch.Stop();
+                elapsed.Add(stopwatch.Elapsed.TotalMilliseconds);
+                stopwatch.Reset();
 
-                if (display) Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
-                Debug.Assert(clone.SequenceEqual(d), "The sorted arrays do not match.");
+                if (display) {
+                    Console.WriteLine($"\nUnsorted Array:\t{string.Join(",", unsorted)}\nSorted Array:\t{string.Join(",", d)}\n");
+                    sort.Quick(unsorted, 0, length - 1);
+                    Debug.Assert(unsorted.SequenceEqual(clone), "The sorted arrays do not match.");
+                }
             }
 
-            stopwatch.Stop();
-            double elapsed = stopwatch.Elapsed.TotalMilliseconds;
-            Console.WriteLine(util.FormatStatistics("Tim", Sets, Count, elapsed));
-            stopwatch.Reset();
+            Console.WriteLine(util.FormatTestStatistics("Tim", elapsed));
         }
-
     }
 }

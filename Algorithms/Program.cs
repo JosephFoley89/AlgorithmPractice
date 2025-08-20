@@ -1,4 +1,6 @@
 ﻿using Algorithms.Tests;
 
-SortingTest SortingTests = new SortingTest(100, 1000000);
-SortingTests.Execute();
+SortingTest sorting = new SortingTest(1000, 1000);
+SearchingTest searching = new SearchingTest(10, 100000);
+sorting.Execute(false);
+searching.Execute();
