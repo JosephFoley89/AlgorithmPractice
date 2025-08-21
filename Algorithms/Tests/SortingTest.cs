@@ -1,5 +1,7 @@
 ﻿using Algorithms.Algorithms;
+using Algorithms.Helper;
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 
 namespace Algorithms.Tests {
     internal class SortingTest {
@@ -54,8 +56,7 @@ namespace Algorithms.Tests {
                 }
             }
 
-            Console.WriteLine(util.FormatTestStatistics("Insertion Sort", elapsed));
-
+            Console.WriteLine(util.FormatTestStatistics("Insertion", elapsed));
         }
 
         public void ExecuteMergeTest(bool debug = false) {
@@ -81,7 +82,7 @@ namespace Algorithms.Tests {
                 }
             }
 
-            Console.WriteLine(util.FormatTestStatistics("Merge Sort", elapsed));
+            Console.WriteLine(util.FormatTestStatistics("Merge", elapsed));
         }
 
         public void ExecuteBubbleTest(bool debug = false) {
@@ -107,7 +108,7 @@ namespace Algorithms.Tests {
                 }
             }
 
-            Console.WriteLine(util.FormatTestStatistics("Bubble Sort", elapsed));
+            Console.WriteLine(util.FormatTestStatistics("Bubble", elapsed));
         }
 
         public void ExecuteQuickTest(bool debug = false) {
@@ -132,7 +133,7 @@ namespace Algorithms.Tests {
                 }
             }
 
-            Console.WriteLine(util.FormatTestStatistics("Quick Sort", elapsed));
+            Console.WriteLine(util.FormatTestStatistics("Quick", elapsed));
         }
 
         public void ExecuteShellTest(bool display = false) {
@@ -158,7 +159,7 @@ namespace Algorithms.Tests {
                 }
             }
 
-            Console.WriteLine(util.FormatTestStatistics("Shell Sort", elapsed));
+            Console.WriteLine(util.FormatTestStatistics("Shell", elapsed));
         }
 
         public void ExecuteSelectionTest(bool debug = false) {
@@ -184,7 +185,7 @@ namespace Algorithms.Tests {
                 }
             }
 
-            Console.WriteLine(util.FormatTestStatistics("Selection Sort", elapsed));
+            Console.WriteLine(util.FormatTestStatistics("Selection", elapsed));
         }
 
         public void ExecuteHeapTest(bool display = false) {
@@ -210,7 +211,7 @@ namespace Algorithms.Tests {
                 }
             }
 
-            Console.WriteLine(util.FormatTestStatistics("Heap Sort", elapsed));
+            Console.WriteLine(util.FormatTestStatistics("Heap", elapsed));
         }
 
         public void ExecuteTimTest(bool display = false) {

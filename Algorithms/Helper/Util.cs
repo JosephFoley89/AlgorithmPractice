@@ -1,4 +1,4 @@
-﻿namespace Algorithms {
+﻿namespace Algorithms.Helper {
     internal class Util {
         private const int MIN = 1;
         private const int MAX = 100;
@@ -11,7 +11,7 @@
             length = length == 0 ? 20 : length;
 
             for (int i = 0; i < sets; i++) {
-                int[] testDataArray = new int[(int)length];
+                int[] testDataArray = new int[length];
 
                 for (int j = 0; j < length; j++) {
                     testDataArray[j] = random.Next(min, max);
@@ -51,14 +51,37 @@
                 .FirstOrDefault();
 
             string successRate = itemsFound == 0.0 ? "" : 
-                $"\n\tFound:\t{(itemsFound / count).ToString("P2")}";
+                $"Found:\t\t{(itemsFound / count).ToString("P2")}";
 
-            return $"\tCompleted {algorithm}"
-                + $"\n\tTotal\t{total.ToString("0.00")}ms"
-                + $"\n\tMean:\t{mean.ToString("0.00")}ms"
-                + $"\n\tMedian:\t{median.ToString("0.00")}ms"
-                + $"\n\tMode:\t{mode.ToString("0.00")}ms"
+            string row = $"Algorithm:\t{algorithm}\n"
+                + $"Total:\t\t{total.ToString("0.0000")}ms\n"
+                + $"Mean:\t\t{mean.ToString("0.0000")}ms\n"
+                + $"Median:\t\t{median.ToString("0.0000")}ms\n"
+                + $"Mode:\t\t{mode.ToString("0.0000")}ms\n"
                 + $"{successRate}\n";
+
+            return $"{row}";
+        }
+
+        public List<(int[], int[])> GenerateKnapsackData(int sets, int count, int minimum = 0, int maximum = 0) {
+            List < (int[], int[])> VWs = new List < (int[], int[])>();
+            Random random = new Random();
+            int min = minimum == 0 ? MIN : minimum;
+            int max = maximum == 0 ? MAX : maximum;
+
+            for (int i = 0; i < sets; i++) {
+                int[] value = new int[count];
+                int[] weight = new int[count];
+
+                for (int j = 0; j < count; j++) {
+                    value[j] = random.Next(min, max);
+                    weight[j] = random.Next(min, max);
+                }
+
+                VWs.Add((value, weight));
+            }
+
+            return VWs;
         }
     }
 }

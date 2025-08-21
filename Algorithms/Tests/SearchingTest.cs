@@ -1,4 +1,5 @@
 ﻿using Algorithms.Algorithms;
+using Algorithms.Helper;
 using System.Diagnostics;
 
 namespace Algorithms.Tests {
@@ -11,6 +12,7 @@ namespace Algorithms.Tests {
         private static int SearchValue;
         private static int Sets;
         private static int Count;
+        private static string Header;
 
         public SearchingTest(int sets = 0, int count = 0, int searchValue = 0) {
             sort = new Sort();
@@ -49,7 +51,7 @@ namespace Algorithms.Tests {
                 stopwatch.Reset();
             }
 
-            Console.WriteLine(util.FormatTestStatistics("Linear Search", elapsed, found));
+            Console.WriteLine(util.FormatTestStatistics("Linear", elapsed, found));
         }
 
         public void TestBinarySearch() {
@@ -75,7 +77,7 @@ namespace Algorithms.Tests {
                 stopwatch.Reset();
             }
 
-            Console.WriteLine(util.FormatTestStatistics("Binary Search", elapsed, found));
+            Console.WriteLine(util.FormatTestStatistics("Binary", elapsed, found));
         }
 
         public void TestRandomSearch() {
@@ -95,7 +97,7 @@ namespace Algorithms.Tests {
                 elapsed.Add(stopwatch.Elapsed.TotalMilliseconds);
             }
 
-            Console.WriteLine(util.FormatTestStatistics("Random Search", elapsed, found));
+            Console.WriteLine(util.FormatTestStatistics("Random", elapsed, found));
         }
     }
 }
